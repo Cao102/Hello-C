@@ -1,0 +1,1 @@
+reverse(s.begin() + i + 1, s.end());
