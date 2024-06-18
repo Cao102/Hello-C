@@ -1,41 +1,65 @@
-#include<bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <queue>
+
 using namespace std;
-int a[15],b[15],s[15],z[15];
-int mx,ans=1e9+7;
-void Try(int k){
-    int num=0;
-    while(k){
-        int x=k&1;
-        bool check=1;      
-        for(int i=1;i<6;i++){
-            if(s[i]!=a[i]){check=0;break;} 
+
+int dl[] = {1, 5, 2, 4, 6, 3};
+int dr[] = {4, 1, 3, 5, 2, 6};
+
+string Drt(string s, int a[], int n) {
+    string res = "";
+    for (int i = 0; i < n; ++i) 
+        res += s[a[i] - 1];
+    return res;
+}
+
+void BFS(string s, string t) {
+    map<string, int> mp;
+    queue<string> q;
+    q.push(s);
+    mp[s] = 1;
+    while (!q.empty()) {
+        string c = q.front(); 
+        q.pop();
+        if (c == t) {
+            cout << mp[c] - 1 << endl;
+            return;
         }
-        if(check){ans=min(num,ans); break;} 
-        for(int i=1;i<=6;i++) z[i]=s[i];
-        num++;
-        k>>=1;
-        if(!x){
-            s[1]=z[4];
-            s[2]=z[1];
-            s[4]=z[5];
-            s[5]=z[2];
+        string a = Drt(c, dl, 6);
+        if (mp.find(a) == mp.end()) {
+            q.push(a);
+            mp[a] = mp[c] + 1;
         }
-        else{
-            s[2]=z[5];
-            s[3]=z[2];
-            s[5]=z[6];
-            s[6]=z[3];
+        string b = Drt(c, dr, 6);
+        if (mp.find(b) == mp.end()) {
+            q.push(b);
+            mp[b] = mp[c] + 1;
         }
     }
 }
-int main(){
-        for(int i=1;i<=6;i++) cin>>s[i],b[i]=s[i];
-        for(int i=1;i<=6;i++) cin>>a[i];
-        mx=1<<20;
-        for(int j=1;j<=mx;j++){
-            for(int i=1;i<=6;i++) s[i]=b[i];
-            Try(j);
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    int t; 
+    cin >> t;
+    while (t--) {
+        string s = "", t = "";
+        for (int i = 0; i < 6; ++i) { 
+            char x; 
+            cin >> x; 
+            s += x;
         }
-        cout<<ans<<endl;
-        return 0;
+        for (int i = 0; i < 6; ++i) { 
+            char x; 
+            cin >> x; 
+            t += x;
+        }
+        BFS(s, t);
     }
+    return 0;
+}

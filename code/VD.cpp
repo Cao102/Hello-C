@@ -1,44 +1,45 @@
 #include<bits/stdc++.h>
 using namespace std;
+int s[15], e[15], tmp[15], z[15];
+int res = 1e9 + 7, mx;
 
-int main(){
-    int t;
-    cin >> t;
-    while(t--){
-        string s;
-        cin >> s;
-        stack<char> st, ld;
-        for(int i = 0; i < s.size(); i++){
-            if(s[i] == '('){
-                st.push(s[i]);
-                ld.push(s[i-1]);
+void Try(int k){
+    int num = 0;
+    while(k){
+        int x = k&1;
+        bool check = 1;
+        for(int j = 1; j < 6; j++){
+            if(s[j] != e[j]){
+                check = 0;
+                break;
             }
-            else if(s[i] == ')'){
-                string k = "";
-                while(st.size()){
-                    char c = st.top(); st.pop();
-                    char d = st.top(); st.pop();
-                    k = c + k;
-                    if(ld.top() == '-'){
-                        if(d == '+') k = '-' + k;
-                        else k = '+' + k;
-                    }
-                    else k = d + k;
-                    if(d == '('){
-                        for(int i = 1; i < k.size(); i++) st.push(k[i]);
-                        break; 
-                    }
-                }
-                ld.pop();
-            }
-            else st.push(s[i]);
         }
-        string ans = "";
-        while(st.size()){
-            ans = st.top() + ans;
-            st.pop();
+        if(check){ res = min(num,res); break;};
+        for(int j = 1; j <= 6; j++) z[j] = s[j];
+        num++;
+        k>>=1; 
+        if(!x){
+            s[1] = z[4];
+            s[2] = z[1];
+            s[4] = z[5];
+            s[5] = z[2]; 
         }
-        cout << ans << endl;
+        else{
+            s[2] = z[5];
+            s[3] = z[2];
+            s[5] = z[6];
+            s[6] = z[3];
+        }   
     }
+}
+int main(){
+    for(int i = 1; i <= 6; i++) cin >> s[i], tmp[i] = s[i];
+    for(int i = 1; i <= 6; i++) cin >> e[i];
+    mx = 1<<20;
+    for(int i = 1; i <= mx; i++){
+        for(int j = 1; j <= 6; j++) s[j] = tmp[j];
+        Try(i);
+    }
+    cout << res << endl;
     return 0;
 }

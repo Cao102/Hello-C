@@ -1,78 +1,58 @@
-#include <bits/stdc++.h>
-#define ll long long
-#define II pair<int, int>
+#include<bits/stdc++.h>
 using namespace std;
 
-map<int, II> brackets; // thứ tự cặp ngoặc | vị trí 2 dấu ngoặc
-vector<string> configs; // xâu nhị phân 01.., 0 là xóa, 1 là giữ vị trí cặp ngoặc thứ i
-
-string RemoveBracket(string s, string tmp) {
-    vector<bool> dd(s.length(), true);
-    for (int i = 0; i < tmp.length(); ++i) {
-        if (tmp[i] == '0') {
-            II bracket = brackets[i];
-            dd[bracket.first] = dd[bracket.second] = false;
-        }
-    }
-    string res = "";
-    for (int i = 0; i < dd.size(); ++i) {
-        if (dd[i] == true)
-            res += s[i];
-    }
-    return res;
-}
-
-void BinGen(int index, string s) {
-    if (index == s.length()) {
-        configs.push_back(s);
-        return;
-    }
-    for (int j = 0; j <= 1; ++j) {
-        s[index] = j + '0';
-        BinGen(index + 1, s);
-    }
-}
-
-void TestCase() {
-    string s; cin >> s;
-    stack<II> st;
-    int cnt = 0; // số lượng cặp ngoặc
-    for (int i = 0; i < s.length(); ++i) {
-        if (s[i] == '(') {
-            brackets[cnt].first = i;
-            st.push({cnt, i});
-            cnt++;
-        }
-        else if (s[i] == ')') {
-            int x = st.top().first;
-            st.pop();
-            brackets[x].second = i;
-        }
-    }
-
-    // sinh các xâu nhị phân để chọn cặp ngoặc bị xóa
-    string tmp = string(cnt, '0');
-    BinGen(0, tmp);
-    configs.pop_back(); // xóa cấu hình 111.. (không xóa cặp ngoặc nào)
-
-    map<string, bool> res; 
-    for (int i = 0; i < configs.size(); ++i) {
-        string z = RemoveBracket(s, configs[i]);
-        res[z] = true;
-    }
-    for (auto i : res) {
-        cout << i.first << endl;
-    }
-}
-
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
-
-    int T = 1;
-    while (T--) {
-        TestCase();
-        cout << endl;
-    }
-    return 0;
+struct point{
+	int x, y, z, s;
+};
+int dx[] = {1, -1, 0, 0, 0, 0};
+int dy[] = {0, 0, 1, -1, 0, 0};
+int dz[] = {0, 0, 0, 0, 1, -1};
+int main(){
+	int t;
+	cin >> t;
+	while(t--){
+		int r, l, h, ok = -1;
+		cin >> h >> r >> l;
+		queue<point> q;;
+		point ed, st;
+		char mt[r][l][h];
+		for(int i = 1; i <= h; i++){
+			cin.ignore();
+			for(int j = 1; j <= r; j++){
+				for(int k = 1; k <= l; k++){
+					cin >> mt[i][j][k];
+					if(mt[i][j][k] == 'S'){
+						st.z = i;
+						st.y = j;
+						st.z = k;
+						st.s = 0;
+						mt[i][j][k] = '#';
+					}	
+				}
+			}
+		}
+		q.push(st);
+		while(q.size()){
+			point tmp,u = q.front(); q.pop();
+			tmp = u;
+			tmp.s++;
+			if(u.x == ed.x && u.y == ed.y && u.z == ed.z){
+				ok = u.s;
+				break;
+			}
+			for(int i = 0; i < 6; i++){
+				tmp.x += dx[i];
+				tmp.y += dy[i];
+				tmp.z += dz[i];
+				if(tmp.x >= 1 && tmp.y >= 1 && tmp.z >= 1 && tmp.x <= h && tmp.y <= r && tmp.z <= l && mt[tmp.x][tmp.y][tmp.z] != '#'){
+					q.push(tmp);
+				}
+				tmp.x -= dx[i];
+				tmp.y -= dy[i];
+				tmp.z -= dz[i];
+			}
+			cout << ok << endl;
+		}
+	}
+	return 0;
 }
